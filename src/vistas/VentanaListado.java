@@ -25,7 +25,7 @@ public class VentanaListado extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(this);
         controlador = new ControladorProducto();
-        llenarTabla();
+        llenarTablaListado();
 
     }
 
@@ -125,7 +125,7 @@ public class VentanaListado extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnRegresarActionPerformed
 
-    private void llenarTabla() {
+    private void llenarTablaListado() {
         try {
             DefaultTableModel modelo = new DefaultTableModel();
             modelo.setColumnIdentifiers(new Object[]{

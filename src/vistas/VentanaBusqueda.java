@@ -5,10 +5,15 @@
 package vistas;
 
 import controladores.ControladorProducto;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import modelos.ConexionBD;
+import modelos.Producto;
+import org.mariadb.jdbc.Connection;
 
 /**
  *
@@ -25,6 +30,7 @@ public class VentanaBusqueda extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(this);
         controlador = new ControladorProducto();
+        llenarTablaProducto();
     }
 
     /**
@@ -45,12 +51,15 @@ public class VentanaBusqueda extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        txtNombre = new javax.swing.JLabel();
-        txtPrecio = new javax.swing.JLabel();
-        txtDistribuidor = new javax.swing.JLabel();
-        txtCategoria = new javax.swing.JLabel();
         btnRegresar = new javax.swing.JButton();
         btnBuscar = new javax.swing.JButton();
+        btnActualizar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        btnRegistrar = new javax.swing.JButton();
+        txtPrecio = new javax.swing.JTextField();
+        txtNombre = new javax.swing.JTextField();
+        txtDistribuidor = new javax.swing.JTextField();
+        txtCategoria = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -92,18 +101,6 @@ public class VentanaBusqueda extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("Categoría:");
 
-        txtNombre.setForeground(new java.awt.Color(0, 0, 0));
-        txtNombre.setText(" ");
-
-        txtPrecio.setForeground(new java.awt.Color(0, 0, 0));
-        txtPrecio.setText(" ");
-
-        txtDistribuidor.setForeground(new java.awt.Color(0, 0, 0));
-        txtDistribuidor.setText(" ");
-
-        txtCategoria.setForeground(new java.awt.Color(0, 0, 0));
-        txtCategoria.setText(" ");
-
         btnRegresar.setBackground(new java.awt.Color(51, 51, 255));
         btnRegresar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnRegresar.setForeground(new java.awt.Color(255, 255, 255));
@@ -124,10 +121,46 @@ public class VentanaBusqueda extends javax.swing.JFrame {
             }
         });
 
+        btnActualizar.setBackground(new java.awt.Color(51, 51, 255));
+        btnActualizar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnActualizar.setForeground(new java.awt.Color(255, 255, 255));
+        btnActualizar.setText("ACTUALIZAR");
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarActionPerformed(evt);
+            }
+        });
+
+        btnEliminar.setBackground(new java.awt.Color(51, 51, 255));
+        btnEliminar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnEliminar.setForeground(new java.awt.Color(255, 255, 255));
+        btnEliminar.setText("ELIMINAR");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
+
+        btnRegistrar.setBackground(new java.awt.Color(51, 51, 255));
+        btnRegistrar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnRegistrar.setForeground(new java.awt.Color(255, 255, 255));
+        btnRegistrar.setText("REGISTRAR");
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnRegresar)
+                .addGap(63, 63, 63)
+                .addComponent(btnBuscar)
+                .addGap(265, 265, 265))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -137,29 +170,33 @@ public class VentanaBusqueda extends javax.swing.JFrame {
                         .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(21, 21, 21)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(76, 76, 76)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel4)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(btnBuscar)
-                                .addGap(13, 13, 13)))
-                        .addGap(31, 31, 31)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(76, 76, 76)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtDistribuidor, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(29, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(btnRegresar)
-                .addGap(405, 405, 405))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                                .addComponent(txtDistribuidor, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(133, 133, 133)
+                        .addComponent(btnActualizar)
+                        .addGap(67, 67, 67)
+                        .addComponent(btnEliminar)
+                        .addGap(99, 99, 99)
+                        .addComponent(btnRegistrar)))
+                .addGap(39, 39, 39))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -173,27 +210,32 @@ public class VentanaBusqueda extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(36, 36, 36)
+                        .addGap(33, 33, 33)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
-                            .addComponent(txtNombre))
-                        .addGap(34, 34, 34)
+                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(28, 28, 28)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(txtPrecio))
-                        .addGap(44, 44, 44)
+                            .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(38, 38, 38)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
-                            .addComponent(txtDistribuidor))
-                        .addGap(43, 43, 43)
+                            .addComponent(txtDistribuidor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(37, 37, 37)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
-                            .addComponent(txtCategoria))))
+                            .addComponent(txtCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(62, 62, 62)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRegresar)
                     .addComponent(btnBuscar))
-                .addContainerGap(63, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnActualizar)
+                    .addComponent(btnEliminar)
+                    .addComponent(btnRegistrar))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -211,6 +253,52 @@ public class VentanaBusqueda extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
+        // TODO add your handling code here:
+        String codigo = txtCodigo.getText().trim();
+        String nombre = txtNombre.getText().trim();
+        double precio = Double.parseDouble(txtPrecio.getText());
+        String distribuidor = txtDistribuidor.getText().trim();
+        String categoria = txtCategoria.getText().trim();
+
+        try{
+            Producto producto = new Producto(codigo, nombre, precio, distribuidor, categoria);
+            controlador.guardarProductos(producto);
+            llenarTablaProducto();
+            JOptionPane.showMessageDialog(null, "Producto registrado");
+
+        }catch (SQLException ex){
+            JOptionPane.showMessageDialog(null, "No se pudo guardar el producto");
+            System.err.println(ex);
+
+        }
+
+    }//GEN-LAST:event_btnRegistrarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // TODO add your handling code here:
+        String codigo = txtCodigo.getText().trim();
+        controlador.deleteProducto(codigo);
+        llenarTablaProducto();
+        JOptionPane.showMessageDialog(null, "Producto eliminado");
+        limpiar();
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        // TODO add your handling code here:
+        String codigo = txtCodigo.getText().trim();
+        String nombre = txtPrecio.getText().trim();
+        double precio = Double.parseDouble(txtPrecio.getText());
+        String distribuidor = txtDistribuidor.getText().trim();
+        String categoria = txtCategoria.getText().trim();
+
+        Producto producto = new Producto(codigo, nombre, precio, distribuidor, categoria);
+        controlador.updateProductos(producto);
+        llenarTablaProducto();
+        JOptionPane.showMessageDialog(null, "Producto editado exitosamente");
+        limpiar();
+    }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         // TODO add your handling code here:
@@ -241,14 +329,14 @@ public class VentanaBusqueda extends javax.swing.JFrame {
                 txtPrecio.setText(String.valueOf(rs.getDouble("precio")));
                 txtDistribuidor.setText(rs.getString("distribuidor"));
                 txtCategoria.setText(rs.getString("categoria"));
-                
+
             }
-            if(codigo.isEmpty()){
-                txtNombre.setText("");
+            if (codigo.isEmpty()) {
+                txtPrecio.setText("");
                 txtPrecio.setText("");
                 txtDistribuidor.setText("");
                 txtCategoria.setText("");
-                
+
             }
 
         } catch (SQLException ex) {
@@ -261,10 +349,49 @@ public class VentanaBusqueda extends javax.swing.JFrame {
         new VentanaPrincipal().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnRegresarActionPerformed
+    private void llenarTablaProducto() {
+        try {
+            DefaultTableModel modelo = new DefaultTableModel();
+            modelo.setColumnIdentifiers(new Object[]{
+                "Codigo", "Nombre", "Precio", "Distribuidor", "Categoria"
+            });
+            tablaProducto.setModel(modelo);
+            ResultSet rs = controlador.listarProductos();
+            ResultSetMetaData rsMD = rs.getMetaData();
+            int cantColum = rsMD.getColumnCount();
+            int anchos[] = {100, 100, 100, 100, 100};
 
+            for (int i = 0; i < tablaProducto.getColumnCount(); i++) {
+                tablaProducto.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
+
+            }
+            while (rs.next()) {
+                Object[] filas = new Object[cantColum];
+                for (int i = 0; i < cantColum; i++) {
+                    filas[i] = rs.getObject(i + 1);
+                }
+                modelo.addRow(filas);
+            }
+
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
+        }
+    }
+
+    private void limpiar() {
+        txtCodigo.setText("");
+        txtNombre.setText("");
+        txtPrecio.setText("");
+        txtDistribuidor.setText("");
+        txtCategoria.setText("");
+
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnActualizar;
     private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnRegistrar;
     private javax.swing.JButton btnRegresar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -274,10 +401,10 @@ public class VentanaBusqueda extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblCodigo;
     private javax.swing.JTable tablaProducto;
-    private javax.swing.JLabel txtCategoria;
+    private javax.swing.JTextField txtCategoria;
     private javax.swing.JTextField txtCodigo;
-    private javax.swing.JLabel txtDistribuidor;
-    private javax.swing.JLabel txtNombre;
-    private javax.swing.JLabel txtPrecio;
+    private javax.swing.JTextField txtDistribuidor;
+    private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtPrecio;
     // End of variables declaration//GEN-END:variables
 }

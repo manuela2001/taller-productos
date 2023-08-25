@@ -24,46 +24,36 @@ public class Producto {
         this.categoria = categoria;
     }
 
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public double getPrecio() {
-        return precio;
-    }
-
     public void setPrecio(double precio) {
         this.precio = precio;
-    }
-
-    public String getDistribuidor() {
-        return distribuidor;
     }
 
     public void setDistribuidor(String distribuidor) {
         this.distribuidor = distribuidor;
     }
 
-    public String getCategoria() {
-        return categoria;
-    }
-
     public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public String getDistribuidor() {
+        return distribuidor;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
     
-    
-            
 }
